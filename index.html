@@ -71,6 +71,8 @@ aside.bp{position:sticky;top:49px;padding:16px 20px;border-left:1px solid var(--
 .sq{position:relative}
 .sq.l{background:var(--light)} .sq.d{background:var(--dark)}
 .sq.lm::after{content:"";position:absolute;inset:0;background:var(--lm)}
+.sq.lm-from::before,.sq.lm-to::before{content:"";position:absolute;inset:12%;border-radius:50%;border:3px solid rgba(20,85,30,.7);z-index:2;pointer-events:none}
+.sq.lm-to::before{inset:8%;border-width:4px;border-color:rgba(20,85,30,.85)}
 .pc{position:absolute;inset:0;background-size:100% 100%;z-index:1}
 .rk{display:grid;grid-template-rows:repeat(8,minmax(0,1fr));line-height:1;font-family:system-ui,sans-serif;color:var(--muted);text-align:center;padding-right:5px}
 .fl{grid-column:2;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));line-height:1.4;font-family:system-ui,sans-serif;color:var(--muted);text-align:center}
@@ -129,6 +131,16 @@ aside.bp{position:sticky;top:49px;padding:16px 20px;border-left:1px solid var(--
   main{padding:14px 16px 60px}
 }
 main p b a.mv,main p b{color:var(--main);font-weight:700}
+
+/* print styles */
+@media print{
+  .top,nav.toc,aside.bp,.ctrls,.tog{display:none!important}
+  .wrap{display:block!important}
+  main{padding:0!important;max-width:none!important}
+  a.mv{color:inherit!important;border:none!important}
+  .tree-grid{grid-template-columns:repeat(6,1fr)!important;page-break-inside:avoid}
+  .tree-cell{border:1px solid #ccc!important}
+}
 </style>
 <style>
 .pc.wP{background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==')}
@@ -152,12 +164,15 @@ main p b a.mv,main p b{color:var(--main);font-weight:700}
   <button id="fminus" title="Smaller text">A−</button>
   <button id="fplus" title="Larger text">A+</button>
   <button id="dark" title="Dark mode">Dark</button>
+  <button id="dlHtml" title="Download HTML">⬇ HTML</button>
+  <button id="dlPrint" title="Print / Save PDF">🖨 PDF</button>
   <button id="bTog" class="tog" title="Show or hide the board">Hide board</button>
 </div>
 <div class="wrap">
   <nav class="toc">
     <div class="h">Games</div>
-    <a class="on" data-g="0">Morphy – Duke Karl / Count Isouard</a>
+    <a class="on" data-g="0" onclick="loadGame(0)">Morphy – Duke Karl / Count Isouard</a>
+    <a data-g="1" onclick="loadGame(1)">Anderssen – Dufresne (Evergreen)</a>
   </nav>
   <main id="content">
   </main>
@@ -1935,6 +1950,14 @@ const GAMES = [
     eco: 'C41', opening: 'Philidor Defense',
     result: '1-0',
     pgn: '1.e4 e5 2.Nf3 d6 3.d4 Bg4 4.dxe5 Bxf3 5.Qxf3 dxe5 6.Bc4 Nf6 7.Qb3 Qe7 8.Nc3 c6 9.Bg5 b5 10.Nxb5 cxb5 11.Bxb5+ Nbd7 12.O-O-O Rd8 13.Rxd7 Rxd7 14.Rd1 Qe6 15.Bxd7+ Nxd7 16.Qb8+ Nxb8 17.Rd8# 1-0'
+  },
+  {
+    white: 'Adolf Anderssen',
+    black: 'Jean Dufresne',
+    event: 'Berlin', date: '1852',
+    eco: 'C52', opening: 'Evans Gambit',
+    result: '1-0',
+    pgn: '1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.b4 Bxb4 5.c3 Ba5 6.d4 exd4 7.O-O d3 8.Qb3 Qf6 9.e5 Qg6 10.Re1 Nge7 11.Ba3 b5 12.Qxb5 Rb8 13.Qa4 Bb6 14.Nbd2 Bb7 15.Ne4 Qf5 16.Bxd3 Qh5 17.Nf6+ gxf6 18.exf6 Rg8 19.Rad1 Qxf3 20.Rxe7+ Nxe7 21.Qxd7+ Kxd7 22.Bf5+ Ke8 23.Bd7+ Kf8 24.Bxe7# 1-0'
   }
 ];
 
@@ -1944,6 +1967,7 @@ let positions = [];
 let totalPly = 0;
 let curPly = 0;
 let flipped = false;
+let curGameIdx = 0;
 
 function parseGame(g) {
   const chess = new Chess();
@@ -1984,7 +2008,8 @@ function boardHTML(fen, lastFrom, lastTo) {
       const isLight = (r + f) % 2 === 0;
       const sq = 'abcdefgh'[f] + (8 - r);
       let cls = 'sq ' + (isLight ? 'l' : 'd');
-      if (lastFrom === sq || lastTo === sq) cls += ' lm';
+      if (lastFrom === sq) cls += ' lm lm-from';
+      else if (lastTo === sq) cls += ' lm lm-to';
       const piece = board[r][f];
       const pcHTML = piece ? '<div class="pc ' + PIECE_MAP[piece] + '"></div>' : '';
       html += '<div class="' + cls + '">' + pcHTML + '</div>';
@@ -2029,7 +2054,7 @@ function goTo(ply) {
   document.getElementById('bd').innerHTML = boardHTML(pos.fen, pos.from, pos.to);
 
   const whoEl = document.getElementById('who');
-  const g = GAMES[0];
+  const g = GAMES[curGameIdx];
   if (ply === 0) whoEl.innerHTML = '<b>' + g.white + '</b> vs <b>' + g.black + '</b>';
   else {
     const turn = ply % 2 === 1 ? g.white : g.black;
@@ -2134,6 +2159,36 @@ document.getElementById('fminus').onclick = function() { fs = Math.max(14, fs - 
 document.getElementById('bTog').onclick = function() {
   document.body.classList.toggle('hideb');
   this.textContent = document.body.classList.contains('hideb') ? 'Show board' : 'Hide board';
+};
+
+/* ── Load a game by index ── */
+function loadGame(idx) {
+  curGameIdx = idx;
+  flipped = false;
+  updateCoords();
+  renderGame(GAMES[idx]);
+  goTo(0);
+  // update sidebar highlight
+  document.querySelectorAll('nav.toc a').forEach(a => {
+    a.classList.toggle('on', +a.dataset.g === idx);
+  });
+}
+
+/* ── Download HTML ── */
+document.getElementById('dlHtml').onclick = function() {
+  var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  var blob = new Blob([html], {type: 'text/html'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  var g = GAMES[curGameIdx];
+  a.download = (g.white + ' vs ' + g.black).replace(/[^a-zA-Z0-9 ]/g,'').replace(/ +/g,'_') + '.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+/* ── Print / PDF ── */
+document.getElementById('dlPrint').onclick = function() {
+  window.print();
 };
 
 /* ── Init ── */
