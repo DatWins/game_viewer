@@ -71,8 +71,9 @@ aside.bp{position:sticky;top:49px;padding:16px 20px;border-left:1px solid var(--
 .sq{position:relative}
 .sq.l{background:var(--light)} .sq.d{background:var(--dark)}
 .sq.lm::after{content:"";position:absolute;inset:0;background:var(--lm)}
-.sq.lm-from::before,.sq.lm-to::before{content:"";position:absolute;inset:12%;border-radius:50%;border:3px solid rgba(20,85,30,.7);z-index:2;pointer-events:none}
-.sq.lm-to::before{inset:8%;border-width:4px;border-color:rgba(20,85,30,.85)}
+.circ{position:absolute;border-radius:50%;border:3px solid rgba(20,85,30,.8);z-index:3;pointer-events:none}
+.sq.lm-from .circ{inset:15%}
+.sq.lm-to .circ{inset:8%;border-width:4px;border-color:rgba(20,85,30,.9)}
 .pc{position:absolute;inset:0;background-size:100% 100%;z-index:1}
 .rk{display:grid;grid-template-rows:repeat(8,minmax(0,1fr));line-height:1;font-family:system-ui,sans-serif;color:var(--muted);text-align:center;padding-right:5px}
 .fl{grid-column:2;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));line-height:1.4;font-family:system-ui,sans-serif;color:var(--muted);text-align:center}
@@ -138,8 +139,12 @@ main p b a.mv,main p b{color:var(--main);font-weight:700}
   .wrap{display:block!important}
   main{padding:0!important;max-width:none!important}
   a.mv{color:inherit!important;border:none!important}
-  .tree-grid{grid-template-columns:repeat(6,1fr)!important;page-break-inside:avoid}
-  .tree-cell{border:1px solid #ccc!important}
+  .tree-grid{grid-template-columns:repeat(6,1fr)!important}
+  .tree-cell{border:1px solid #ccc!important;break-inside:avoid}
+  .tree-cell .mini-bd{width:100%;aspect-ratio:1}
+  .tree-cell .mini-bd .sq{position:relative}
+  .tree-cell .mini-bd .pc{position:absolute;inset:0;background-size:100% 100%;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sq.l,.sq.d{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 <style>
@@ -2008,11 +2013,12 @@ function boardHTML(fen, lastFrom, lastTo) {
       const isLight = (r + f) % 2 === 0;
       const sq = 'abcdefgh'[f] + (8 - r);
       let cls = 'sq ' + (isLight ? 'l' : 'd');
-      if (lastFrom === sq) cls += ' lm lm-from';
-      else if (lastTo === sq) cls += ' lm lm-to';
+      let circHTML = '';
+      if (lastFrom === sq) { cls += ' lm lm-from'; circHTML = '<div class="circ"></div>'; }
+      else if (lastTo === sq) { cls += ' lm lm-to'; circHTML = '<div class="circ"></div>'; }
       const piece = board[r][f];
       const pcHTML = piece ? '<div class="pc ' + PIECE_MAP[piece] + '"></div>' : '';
-      html += '<div class="' + cls + '">' + pcHTML + '</div>';
+      html += '<div class="' + cls + '">' + pcHTML + circHTML + '</div>';
     }
   }
   return html;
