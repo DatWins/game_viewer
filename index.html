@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Morphy vs Duke Karl / Count Isouard – Opera Game (1858)</title>
+<title>Game Viewer</title>
 <style>
 :root{
   --fs:21px;
@@ -23,17 +23,42 @@ body{font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;font-size:v
 
 /* top bar */
 .top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--side);border-bottom:1px solid var(--line);font-family:system-ui,"Segoe UI",sans-serif;font-size:15px}
+.top a.lib{color:var(--main);text-decoration:none;font-weight:600;white-space:nowrap}
 .top .t{font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 button{font:inherit;font-family:system-ui,"Segoe UI",sans-serif;background:var(--btn);color:var(--ink);border:1px solid var(--btnb);border-radius:7px;padding:6px 12px;cursor:pointer;min-width:40px}
 button:hover{border-color:var(--main)}
 button:disabled{opacity:.35;cursor:default}
 
-/* 2-column layout: board left, content right */
-.wrap{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start}
-:root{--bw:min(44vw, calc(100vh - 290px), 540px)}
+/* 3-column layout: toc | content | board */
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr) auto;align-items:start}
+:root{--bw:min(44vw, calc(100vh - 290px), 680px)}
 
-/* board panel (left) */
-aside.bp{position:sticky;top:49px;padding:16px 20px;border-right:1px solid var(--line);height:calc(100vh - 49px);overflow:auto;width:calc(var(--bw) + 70px)}
+/* left sidebar – game list */
+nav.toc{position:sticky;top:49px;height:calc(100vh - 49px);overflow:auto;padding:18px 14px;border-right:1px solid var(--line);background:var(--side);font-family:system-ui,"Segoe UI",sans-serif;font-size:15px}
+nav.toc .h{font-weight:700;color:var(--muted);text-transform:uppercase;font-size:12px;letter-spacing:.06em;margin-bottom:8px}
+nav.toc a{display:block;padding:8px 10px 8px 12px;margin:2px 0;border-radius:6px;border-left:4px solid transparent;color:var(--ink);font-weight:600;text-decoration:none;cursor:pointer;line-height:1.35}
+nav.toc a:hover{background:var(--hlink);color:var(--main)}
+nav.toc a.on{background:var(--main);color:#fff;font-weight:700;border-left-color:#f2b500}
+:root[data-theme="dark"] nav.toc a.on{color:#111}
+
+/* center content */
+main{padding:28px 40px 120px;max-width:44em;margin:0 auto;width:100%}
+.kicker{font-family:system-ui,"Segoe UI",sans-serif;font-size:.7em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+h1{font-family:system-ui,"Segoe UI",sans-serif;font-size:2.3em;line-height:1.1;margin:.2em 0 .15em}
+.gamehead{font-size:.9em;line-height:1.5;margin:.4em 0 .8em;color:var(--muted)}
+.gamehead b{color:var(--ink)}
+h2{font-family:system-ui,"Segoe UI",sans-serif;font-size:1.25em;margin:1.8em 0 .5em;padding-top:.4em;border-top:2px solid var(--line)}
+p{margin:.65em 0}
+
+/* moves */
+a.mv{cursor:pointer;border-radius:4px;padding:0 2px;color:var(--var);text-decoration:none;border-bottom:1px dotted var(--muted)}
+a.mv:hover{background:var(--hlink)}
+a.mv.cur{background:var(--hl);border-bottom-color:transparent}
+p.ml{font-weight:700;font-size:1.12em;margin:1em 0 .4em}
+p.ml a.mv{color:var(--main);border-bottom:none}
+
+/* right board panel */
+aside.bp{position:sticky;top:49px;padding:16px 20px;border-left:1px solid var(--line);height:calc(100vh - 49px);overflow:auto;width:calc(var(--bw) + 70px)}
 .bhead{font-family:system-ui,"Segoe UI",sans-serif;font-size:15px;color:var(--muted);margin-bottom:8px;min-height:1.4em;display:flex;justify-content:space-between;gap:10px}
 .bhead b{color:var(--ink);font-size:17px}
 .ctrls{display:flex;gap:6px;margin:12px 0 0 22px;flex-wrap:wrap}
@@ -46,28 +71,11 @@ aside.bp{position:sticky;top:49px;padding:16px 20px;border-right:1px solid var(-
 .sq{position:relative}
 .sq.l{background:var(--light)} .sq.d{background:var(--dark)}
 .sq.lm::after{content:"";position:absolute;inset:0;background:var(--lm)}
-.sq.sel::after{content:"";position:absolute;inset:0;background:var(--sel)}
 .pc{position:absolute;inset:0;background-size:100% 100%;z-index:1}
 .rk{display:grid;grid-template-rows:repeat(8,minmax(0,1fr));line-height:1;font-family:system-ui,sans-serif;color:var(--muted);text-align:center;padding-right:5px}
 .fl{grid-column:2;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));line-height:1.4;font-family:system-ui,sans-serif;color:var(--muted);text-align:center}
 .rk span{display:flex;align-items:center}
 #live .bd{width:var(--bw);cursor:pointer} #live .rk,#live .fl{font-size:14px}
-
-/* main content area */
-main{padding:28px 40px 120px;max-width:50em;margin:0 auto;width:100%}
-.kicker{font-family:system-ui,"Segoe UI",sans-serif;font-size:.7em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-h1{font-family:system-ui,"Segoe UI",sans-serif;font-size:2.1em;line-height:1.1;margin:.2em 0 .15em}
-.gamehead{font-size:.9em;line-height:1.5;margin:.4em 0 .8em;color:var(--muted)}
-.gamehead b{color:var(--ink)}
-h2{font-family:system-ui,"Segoe UI",sans-serif;font-size:1.25em;margin:1.8em 0 .5em;padding-top:.4em;border-top:2px solid var(--line)}
-
-/* PGN moves */
-a.mv{cursor:pointer;border-radius:4px;padding:0 2px;color:var(--var);text-decoration:none;border-bottom:1px dotted var(--muted)}
-a.mv:hover{background:var(--hlink)}
-a.mv.cur{background:var(--hl);border-bottom-color:transparent}
-p.ml{font-weight:700;font-size:1.12em;margin:1em 0 .4em}
-p.ml a.mv{color:var(--main);border-bottom:none}
-.pgn-inline{line-height:2}
 
 /* opening tree – horizontal grid of mini boards */
 .tree-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:12px}
@@ -86,9 +94,12 @@ p.ml a.mv{color:var(--main);border-bottom:none}
   .top button{padding:5px 9px;min-width:0}
   .tog{display:inline-block}
   .wrap{grid-template-columns:1fr}
-  aside.bp{order:-1;position:sticky;top:49px;z-index:10;height:auto;width:auto;border-right:0;border-bottom:1px solid var(--line);background:var(--paper);padding:8px 12px 10px}
+  nav.toc{display:none}
+  aside.bp{order:-1;position:sticky;top:49px;z-index:10;height:auto;width:auto;border-left:0;border-bottom:1px solid var(--line);background:var(--paper);padding:8px 12px 10px}
   :root{--bw:min(calc(100vw - 96px), 30vh, 520px);--bw:min(calc(100vw - 96px), 30svh, 520px)}
   .bhead{font-size:13px;margin-bottom:4px;align-items:baseline}
+  .bhead #who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .bhead b{font-size:15px;white-space:nowrap}
   #live{display:flex;justify-content:center}
   #live .rk,#live .fl{font-size:11px}
   .ctrls,.msg{margin-left:0;justify-content:center;text-align:center}
@@ -101,8 +112,23 @@ p.ml a.mv{color:var(--main);border-bottom:none}
 }
 @media (max-width:480px){
   .top .t{display:none}
+  .top a.lib{flex:1}
   .tree-grid{grid-template-columns:repeat(3,1fr);gap:6px}
 }
+/* phone landscape */
+@media (max-width:1100px) and (orientation:landscape) and (max-height:600px){
+  .wrap{grid-template-columns:minmax(0,1fr) auto}
+  aside.bp{order:0;top:49px;height:calc(100vh - 49px);height:calc(100svh - 49px);overflow:auto;border-bottom:0;border-left:1px solid var(--line);
+    display:grid;grid-template-columns:auto 120px;column-gap:10px;align-content:start;padding:6px 10px}
+  :root{--bw:calc(100vh - 49px - 46px);--bw:calc(100svh - 49px - 46px)}
+  .bhead{grid-column:1/-1}
+  #live{grid-column:1;grid-row:2/span 3}
+  .ctrls{grid-column:2;justify-content:flex-start;text-align:left}
+  .ctrls{display:grid;grid-template-columns:1fr 1fr;margin-top:0}
+  .ctrls button{max-width:none}
+  main{padding:14px 16px 60px}
+}
+main p b a.mv,main p b{color:var(--main);font-weight:700}
 </style>
 <style>
 .pc.wP{background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTIyLjUgOWMtMi4yMSAwLTQgMS43OS00IDQgMCAuODkuMjkgMS43MS43OCAyLjM4QzE3LjMzIDE2LjUgMTYgMTguNTkgMTYgMjFjMCAyLjAzLjk0IDMuODQgMi40MSA1LjAzLTMgMS4wNi03LjQxIDUuNTUtNy40MSAxMy40N2gyM2MwLTcuOTItNC40MS0xMi40MS03LjQxLTEzLjQ3IDEuNDctMS4xOSAyLjQxLTMgMi40MS01LjAzIDAtMi40MS0xLjMzLTQuNS0zLjI4LTUuNjIuNDktLjY3Ljc4LTEuNDkuNzgtMi4zOCAwLTIuMjEtMS43OS00LTQtNHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==')}
@@ -118,16 +144,23 @@ p.ml a.mv{color:var(--main);border-bottom:none}
 .pc.bQ{background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxnIHN0cm9rZT0ibm9uZSI+PGNpcmNsZSBjeD0iNiIgY3k9IjEyIiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMTQiIGN5PSI5IiByPSIyLjc1Ii8+PGNpcmNsZSBjeD0iMjIuNSIgY3k9IjgiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzMSIgY3k9IjkiIHI9IjIuNzUiLz48Y2lyY2xlIGN4PSIzOSIgY3k9IjEyIiByPSIyLjc1Ii8+PC9nPjxwYXRoIGQ9Ik05IDI2YzguNS0xLjUgMjEtMS41IDI3IDBsMi41LTEyLjVMMzEgMjVsLS4zLTE0LjEtNS4yIDEzLjYtMy0xNC41LTMgMTQuNS01LjItMTMuNkwxNCAyNSA2LjUgMTMuNSA5IDI2eiIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNOSAyNmMwIDIgMS41IDIgMi41IDQgMSAxLjUgMSAxIC41IDMuNS0xLjUgMS0xLjUgMi41LTEuNSAyLjUtMS41IDEuNS41IDIuNS41IDIuNSA2LjUgMSAxNi41IDEgMjMgMCAwIDAgMS41LTEgMC0yLjUgMCAwIC41LTEuNS0xLTIuNS0uNS0yLjUtLjUtMiAuNS0zLjUgMS0yIDIuNS0yIDIuNS00LTguNS0xLjUtMTguNS0xLjUtMjcgMHoiIHN0cm9rZS1saW5lY2FwPSJidXR0Ii8+PHBhdGggZD0iTTExIDM4LjVhMzUgMzUgMSAwIDAgMjMgMCIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiLz48cGF0aCBkPSJNMTEgMjlhMzUgMzUgMSAwIDEgMjMgMG0tMjEuNSAyLjVoMjBtLTIxIDNhMzUgMzUgMSAwIDAgMjIgMG0tMjMgM2EzNSAzNSAxIDAgMCAyNCAwIiBmaWxsPSJub25lIiBzdHJva2U9IiNlY2VjZWMiLz48L2c+PC9zdmc+')}
 .pc.bK{background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMi41IDExLjYzVjYiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiLz48cGF0aCBkPSJNMjIuNSAyNXM0LjUtNy41IDMtMTAuNWMwIDAtMS0yLjUtMy0yLjVzLTMgMi41LTMgMi41Yy0xLjUgMyAzIDEwLjUgMyAxMC41IiBmaWxsPSIjMDAwIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIvPjxwYXRoIGQ9Ik0xMS41IDM3YzUuNSAzLjUgMTUuNSAzLjUgMjEgMHYtN3M5LTQuNSA2LTEwLjVjLTQtNi41LTEzLjUtMy41LTE2IDRWMjd2LTMuNWMtMy41LTcuNS0xMy0xMC41LTE2LTQtMyA2IDUgMTAgNSAxMFYzN3oiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNMjAgOGg1IiBzdHJva2UtbGluZWpvaW49Im1pdGVyIi8+PHBhdGggZD0iTTMyIDI5LjVzOC41LTQgNi4wMy05LjY1QzM0LjE1IDE0IDI1IDE4IDIyLjUgMjQuNWwuMDEgMi4xLS4wMS0yLjFDMjAgMTggOS45MDYgMTQgNi45OTcgMTkuODVjLTIuNDk3IDUuNjUgNC44NTMgOSA0Ljg1MyA5IiBzdHJva2U9IiNlY2VjZWMiLz48cGF0aCBkPSJNMTEuNSAzMGM1LjUtMyAxNS41LTMgMjEgMG0tMjEgMy41YzUuNS0zIDE1LjUtMyAyMSAwbS0yMSAzLjVjNS41LTMgMTUuNS0zIDIxIDAiIHN0cm9rZT0iI2VjZWNlYyIvPjwvZz48L3N2Zz4=')}
 </style>
+<script>try{if(window.self!==window.top)document.documentElement.classList.add('embed')}catch(e){document.documentElement.classList.add('embed')}</script>
 </head>
 <body>
 <div class="top">
-  <span class="t">Morphy vs Duke Karl / Count Isouard – Opera Game (1858)</span>
+  <span class="t">Game Viewer</span>
   <button id="fminus" title="Smaller text">A−</button>
   <button id="fplus" title="Larger text">A+</button>
   <button id="dark" title="Dark mode">Dark</button>
   <button id="bTog" class="tog" title="Show or hide the board">Hide board</button>
 </div>
 <div class="wrap">
+  <nav class="toc">
+    <div class="h">Games</div>
+    <a class="on" data-g="0">Morphy – Duke Karl / Count Isouard</a>
+  </nav>
+  <main id="content">
+  </main>
   <aside class="bp">
     <div class="bhead"><span id="who"></span></div>
     <div id="live"><div class="bwrap"><div class="rk" id="rk"></div><div class="bd" id="bd"></div><div class="fl" id="fl"></div></div></div>
@@ -140,18 +173,6 @@ p.ml a.mv{color:var(--main);border-bottom:none}
     </div>
     <div class="msg" id="status"></div>
   </aside>
-  <main>
-    <div class="kicker">Game Viewer</div>
-    <h1>The Opera Game</h1>
-    <p class="gamehead"><b>Paul Morphy</b> vs <b>Duke Karl / Count Isouard</b> &middot; Paris, 1858 &middot; C41 Philidor Defense &middot; <b>1-0</b></p>
-
-    <h2>Moves</h2>
-    <div class="pgn-inline" id="pgn"></div>
-
-    <h2>Opening Tree</h2>
-    <p style="font-size:.85em;color:var(--muted)">Click any position to jump there on the board.</p>
-    <div class="tree-grid" id="tree"></div>
-  </main>
 </div>
 
 <script>
@@ -1905,33 +1926,40 @@ if (typeof define !== 'undefined')
     return Chess
   })
 
-/* ── Game data ── */
-const PGN = '1.e4 e5 2.Nf3 d6 3.d4 Bg4 4.dxe5 Bxf3 5.Qxf3 dxe5 6.Bc4 Nf6 7.Qb3 Qe7 8.Nc3 c6 9.Bg5 b5 10.Nxb5 cxb5 11.Bxb5+ Nbd7 12.O-O-O Rd8 13.Rxd7 Rxd7 14.Rd1 Qe6 15.Bxd7+ Nxd7 16.Qb8+ Nxb8 17.Rd8# 1-0';
-const WHITE = 'Paul Morphy';
-const BLACK = 'Duke Karl / Count Isouard';
+/* ── Game database ── */
+const GAMES = [
+  {
+    white: 'Paul Morphy',
+    black: 'Duke Karl / Count Isouard',
+    event: 'Paris', date: '1858',
+    eco: 'C41', opening: 'Philidor Defense',
+    result: '1-0',
+    pgn: '1.e4 e5 2.Nf3 d6 3.d4 Bg4 4.dxe5 Bxf3 5.Qxf3 dxe5 6.Bc4 Nf6 7.Qb3 Qe7 8.Nc3 c6 9.Bg5 b5 10.Nxb5 cxb5 11.Bxb5+ Nbd7 12.O-O-O Rd8 13.Rxd7 Rxd7 14.Rd1 Qe6 15.Bxd7+ Nxd7 16.Qb8+ Nxb8 17.Rd8# 1-0'
+  }
+];
 
-/* ── Parse game into positions ── */
-const game = new Chess();
-const positions = []; // {fen, san, from, to, ply}
-positions.push({fen: game.fen(), san: null, from: null, to: null, ply: 0});
-
-// Strip result and move numbers, split into SANs
-const sans = PGN.replace(/\s*(1-0|0-1|1\/2-1\/2|\*)\s*$/, '')
-  .replace(/\d+\.\s*/g, ' ').trim().split(/\s+/)
-  .filter(s => s.length > 0 && !s.match(/^\d+\.?$/));
-
-sans.forEach((san, i) => {
-  const m = game.move(san);
-  if (m) positions.push({fen: game.fen(), san: m.san, from: m.from, to: m.to, ply: i + 1});
-});
-
-const totalPly = positions.length - 1;
+/* ── Parse game ── */
+const PIECE_MAP = {p:'bP',r:'bR',n:'bN',b:'bB',q:'bQ',k:'bK',P:'wP',R:'wR',N:'wN',B:'wB',Q:'wQ',K:'wK'};
+let positions = [];
+let totalPly = 0;
 let curPly = 0;
 let flipped = false;
 
-/* ── Board rendering ── */
-const PIECE_MAP = {p:'bP',r:'bR',n:'bN',b:'bB',q:'bQ',k:'bK',P:'wP',R:'wR',N:'wN',B:'wB',Q:'wQ',K:'wK'};
+function parseGame(g) {
+  const chess = new Chess();
+  positions = [{fen: chess.fen(), san: null, from: null, to: null, ply: 0}];
+  const sans = g.pgn.replace(/\s*(1-0|0-1|1\/2-1\/2|\*)\s*$/, '')
+    .replace(/\d+\.\s*/g, ' ').trim().split(/\s+/)
+    .filter(s => s.length > 0 && !s.match(/^\d+\.?$/));
+  sans.forEach((san, i) => {
+    const m = chess.move(san);
+    if (m) positions.push({fen: chess.fen(), san: m.san, from: m.from, to: m.to, ply: i + 1});
+  });
+  totalPly = positions.length - 1;
+  curPly = 0;
+}
 
+/* ── Board rendering ── */
 function fenToBoard(fen) {
   const rows = fen.split(' ')[0].split('/');
   const board = [];
@@ -1958,8 +1986,8 @@ function boardHTML(fen, lastFrom, lastTo) {
       let cls = 'sq ' + (isLight ? 'l' : 'd');
       if (lastFrom === sq || lastTo === sq) cls += ' lm';
       const piece = board[r][f];
-      const pcHTML = piece ? `<div class="pc ${PIECE_MAP[piece]}"></div>` : '';
-      html += `<div class="${cls}">${pcHTML}</div>`;
+      const pcHTML = piece ? '<div class="pc ' + PIECE_MAP[piece] + '"></div>' : '';
+      html += '<div class="' + cls + '">' + pcHTML + '</div>';
     }
   }
   return html;
@@ -1971,10 +1999,9 @@ function miniBoardHTML(fen) {
   for (let r = 0; r < 8; r++) {
     for (let f = 0; f < 8; f++) {
       const isLight = (r + f) % 2 === 0;
-      let cls = 'sq ' + (isLight ? 'l' : 'd');
       const piece = board[r][f];
-      const pcHTML = piece ? `<div class="pc ${PIECE_MAP[piece]}"></div>` : '';
-      html += `<div class="${cls}">${pcHTML}</div>`;
+      const pcHTML = piece ? '<div class="pc ' + PIECE_MAP[piece] + '"></div>' : '';
+      html += '<div class="sq ' + (isLight ? 'l' : 'd') + '">' + pcHTML + '</div>';
     }
   }
   return html;
@@ -1985,107 +2012,123 @@ function updateCoords() {
   const flEl = document.getElementById('fl');
   const ranks = flipped ? ['1','2','3','4','5','6','7','8'] : ['8','7','6','5','4','3','2','1'];
   const files = flipped ? 'hgfedcba' : 'abcdefgh';
-  rkEl.innerHTML = ranks.map(r => `<span>${r}</span>`).join('');
-  flEl.innerHTML = files.split('').map(f => `<span>${f}</span>`).join('');
+  rkEl.innerHTML = ranks.map(r => '<span>' + r + '</span>').join('');
+  flEl.innerHTML = files.split('').map(f => '<span>' + f + '</span>').join('');
 }
 
-/* ── Move label ── */
 function moveLabel(ply, san) {
   const n = Math.ceil(ply / 2);
-  return ply % 2 === 1 ? `${n}.${san}` : `${n}...${san}`;
+  return ply % 2 === 1 ? n + '.' + san : n + '...' + san;
 }
 
-/* ── Go to a ply ── */
+/* ── Navigate ── */
 function goTo(ply) {
   ply = Math.max(0, Math.min(totalPly, ply));
   curPly = ply;
   const pos = positions[ply];
   document.getElementById('bd').innerHTML = boardHTML(pos.fen, pos.from, pos.to);
 
-  // Update who line
   const whoEl = document.getElementById('who');
-  if (ply === 0) whoEl.innerHTML = `<b>${WHITE}</b> vs <b>${BLACK}</b>`;
+  const g = GAMES[0];
+  if (ply === 0) whoEl.innerHTML = '<b>' + g.white + '</b> vs <b>' + g.black + '</b>';
   else {
-    const turn = ply % 2 === 1 ? WHITE : BLACK;
-    whoEl.innerHTML = `<b>${turn}</b> played ${moveLabel(ply, pos.san)}`;
+    const turn = ply % 2 === 1 ? g.white : g.black;
+    whoEl.innerHTML = '<b>' + turn + '</b> played ' + moveLabel(ply, pos.san);
   }
 
-  // Update status
-  const statusEl = document.getElementById('status');
-  if (ply === totalPly) statusEl.textContent = positions[totalPly].fen.includes(' ') ? 'Game over – 1-0' : '';
-  else statusEl.textContent = '';
+  document.getElementById('status').textContent = ply === totalPly ? 'Game over – ' + g.result : '';
 
-  // Highlight current PGN move
-  document.querySelectorAll('#pgn a.mv').forEach(a => {
+  document.querySelectorAll('a.mv').forEach(a => {
     a.classList.toggle('cur', +a.dataset.ply === ply);
   });
-
-  // Highlight current tree cell
-  document.querySelectorAll('#tree .tree-cell').forEach(c => {
+  document.querySelectorAll('.tree-cell').forEach(c => {
     c.classList.toggle('on', +c.dataset.ply === ply);
   });
 
-  // Scroll the current PGN move into view
-  const curMv = document.querySelector('#pgn a.mv.cur');
-  if (curMv) curMv.scrollIntoView({block:'nearest', behavior:'smooth'});
+  const curMv = document.querySelector('a.mv.cur');
+  if (curMv) curMv.scrollIntoView({block: 'nearest', behavior: 'smooth'});
 }
 
-/* ── Build PGN display ── */
-function buildPGN() {
-  const el = document.getElementById('pgn');
-  let html = '<p class="ml">';
+/* ── Render game into main content ── */
+function renderGame(g) {
+  parseGame(g);
+  const el = document.getElementById('content');
+  let html = '';
+
+  // header
+  html += '<div class="kicker">' + g.eco + ' ' + g.opening + '</div>';
+  html += '<h1>' + g.white + ' vs ' + g.black + '</h1>';
+  html += '<p class="gamehead">' + g.event + ', ' + g.date + ' &middot; Result: <b>' + g.result + '</b></p>';
+
+  // PGN moves
+  html += '<p class="ml">';
   for (let i = 1; i <= totalPly; i++) {
     const pos = positions[i];
-    if (i % 2 === 1) html += `<b>${Math.ceil(i/2)}.</b>`;
-    html += `<a class="mv" data-ply="${i}" onclick="goTo(${i})">${pos.san}</a> `;
+    if (i % 2 === 1) html += '<b>' + Math.ceil(i/2) + '.</b>';
+    html += '<a class="mv" data-ply="' + i + '" onclick="goTo(' + i + ')">' + pos.san + '</a> ';
   }
-  html += '<b>1-0</b></p>';
-  el.innerHTML = html;
-}
+  html += '<b>' + g.result + '</b></p>';
 
-/* ── Build opening tree (horizontal mini boards) ── */
-function buildTree() {
-  const el = document.getElementById('tree');
-  let html = '';
+  // opening tree
+  html += '<h2>Opening Tree</h2>';
+  html += '<p style="font-size:.85em;color:var(--muted)">Click any position to jump there on the board.</p>';
+  html += '<div class="tree-grid" id="tree">';
   for (let i = 0; i <= totalPly; i++) {
     const pos = positions[i];
     const label = i === 0 ? 'Start' : moveLabel(i, pos.san);
-    html += `<div class="tree-cell" data-ply="${i}" onclick="goTo(${i})">`;
-    html += `<div class="mini-bd">${miniBoardHTML(pos.fen)}</div>`;
-    html += `<div class="label">${label}</div>`;
+    html += '<div class="tree-cell' + (i === 0 ? ' on' : '') + '" data-ply="' + i + '" onclick="goTo(' + i + ')">';
+    html += '<div class="mini-bd">' + miniBoardHTML(pos.fen) + '</div>';
+    html += '<div class="label">' + label + '</div>';
     html += '</div>';
   }
+  html += '</div>';
+
   el.innerHTML = html;
 }
 
 /* ── Controls ── */
-document.getElementById('bStart').onclick = () => goTo(0);
-document.getElementById('bPrev').onclick = () => goTo(curPly - 1);
-document.getElementById('bNext').onclick = () => goTo(curPly + 1);
-document.getElementById('bEnd').onclick = () => goTo(totalPly);
-document.getElementById('bFlip').onclick = () => { flipped = !flipped; updateCoords(); goTo(curPly); buildTree(); };
+document.getElementById('bStart').onclick = function() { goTo(0); };
+document.getElementById('bPrev').onclick = function() { goTo(curPly - 1); };
+document.getElementById('bNext').onclick = function() { goTo(curPly + 1); };
+document.getElementById('bEnd').onclick = function() { goTo(totalPly); };
+document.getElementById('bFlip').onclick = function() { flipped = !flipped; updateCoords(); goTo(curPly); rebuildTree(); };
 
-/* keyboard shortcuts */
-document.addEventListener('keydown', e => {
+function rebuildTree() {
+  var tree = document.getElementById('tree');
+  if (!tree) return;
+  var html = '';
+  for (var i = 0; i <= totalPly; i++) {
+    var pos = positions[i];
+    var label = i === 0 ? 'Start' : moveLabel(i, pos.san);
+    html += '<div class="tree-cell' + (i === curPly ? ' on' : '') + '" data-ply="' + i + '" onclick="goTo(' + i + ')">';
+    html += '<div class="mini-bd">' + miniBoardHTML(pos.fen) + '</div>';
+    html += '<div class="label">' + label + '</div>';
+    html += '</div>';
+  }
+  tree.innerHTML = html;
+}
+
+/* keyboard */
+document.addEventListener('keydown', function(e) {
   if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(curPly - 1); }
   else if (e.key === 'ArrowRight') { e.preventDefault(); goTo(curPly + 1); }
   else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
   else if (e.key === 'End') { e.preventDefault(); goTo(totalPly); }
-  else if (e.key === 'f' || e.key === 'F') { flipped = !flipped; updateCoords(); goTo(curPly); buildTree(); }
+  else if (e.key === 'f' || e.key === 'F') { flipped = !flipped; updateCoords(); goTo(curPly); rebuildTree(); }
 });
 
 /* dark mode */
 document.getElementById('dark').onclick = function() {
-  const root = document.documentElement;
-  const isDark = root.getAttribute('data-theme') === 'dark';
+  var root = document.documentElement;
+  var isDark = root.getAttribute('data-theme') === 'dark';
   root.setAttribute('data-theme', isDark ? '' : 'dark');
   this.textContent = isDark ? 'Dark' : 'Light';
 };
 
 /* text size */
-let fs = 21;
-document.getElementById('fplus').onclick = () => { fs = Math.min(32, fs + 2); document.documentElement.style.setProperty('--fs', fs + 'px'); };
-document.getElementById('fminus').onclick = () => { fs = Math.max(14, fs - 2); document.documentElement.style.setProperty('--fs', fs + 'px'); };
+var fs = 21;
+document.getElementById('fplus').onclick = function() { fs = Math.min(32, fs + 2); document.documentElement.style.setProperty('--fs', fs + 'px'); };
+document.getElementById('fminus').onclick = function() { fs = Math.max(14, fs - 2); document.documentElement.style.setProperty('--fs', fs + 'px'); };
 
 /* board toggle (mobile) */
 document.getElementById('bTog').onclick = function() {
@@ -2095,8 +2138,7 @@ document.getElementById('bTog').onclick = function() {
 
 /* ── Init ── */
 updateCoords();
-buildPGN();
-buildTree();
+renderGame(GAMES[0]);
 goTo(0);
 </script>
 </body>
